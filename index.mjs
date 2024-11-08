@@ -10,7 +10,7 @@ async function main() {
     sampleRate: 16_000,
     bitDepth: 32,
     channels: 2,
-    delayTime: 125,
+    // delayTime: 125,
   });
 
   mixer.on('data', (buf) => {
@@ -33,16 +33,17 @@ async function main() {
     channels: 1,
   })
 
-  const musicStream = fs.createReadStream('music.wav', 'binary')
-  const fishStream = fs.createReadStream('fish.wav', 'binary')
-  const outStream = fs.createWriteStream('out.wav', 'binary')
+  const musicStream = fs.createReadStream('music.wav')
+  const fishStream = fs.createReadStream('fish.wav')
+  const outStream = fs.createWriteStream('out.wav')
 
   musicStream.pipe(music)
   fishStream.pipe(fish)
 
   mixer.pipe(outStream)
 
-  musicStream.on('end', () => {
+  fishStream.on('end', async() => {
+    await new Promise(resolve => setTimeout(resolve, 2000));
     console.log('input ended');
 
     console.info('Saving audio to out.wav')
